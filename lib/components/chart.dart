@@ -8,7 +8,7 @@ class Chart extends StatelessWidget {
 
   const Chart(this.recentTransaction, {Key? key}) : super(key: key);
 
-  List<Map<String, Object>> get groupedTransactions {
+  List<Map<String, dynamic>> get groupedTransactions {
     return List.generate(7, (index) {
       final weekDay = DateTime.now().subtract(
         Duration(days: index),
@@ -30,6 +30,12 @@ class Chart extends StatelessWidget {
         'day': DateFormat.E().format(weekDay)[0],
         'value': totalSum,
       };
+    }).reversed.toList();
+  }
+
+  double get _weekTotalValue {
+    return groupedTransactions.fold(0.0, (sum, item) {
+      return sum + item['value'];
     });
   }
 
@@ -37,16 +43,23 @@ class Chart extends StatelessWidget {
   Widget build(BuildContext context) {
     groupedTransactions;
     return Card(
-      elevation: 6,
-      margin: const EdgeInsets.all(20),
-      child: Row(
-        children: groupedTransactions.map((tr) {
-          return ChartBar(
-            label: tr['day'] as String,
-            value: tr['value'] as double,
-            percentage: 0,
-          );
-        }).toList(),
+      elevation: 7,
+      margin: const EdgeInsets.all(19),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: groupedTransactions.map((tr) {
+            return Flexible(
+              fit: FlexFit.tight,
+              child: ChartBar(
+                label: tr['day'] as String,
+                value: tr['value'] as double,
+                percentage: (tr['value'] as double) / _weekTotalValue,
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
