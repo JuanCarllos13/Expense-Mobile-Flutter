@@ -6,13 +6,14 @@ import 'package:intl/intl.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transaction;
+  final void Function(String) onRemove;
 
-  TransactionList(this.transaction, {super.key});
+  const TransactionList(this.transaction, this.onRemove, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 300,
+      height: 430,
       child: transaction.isEmpty
           ? Column(
               children: [
@@ -39,7 +40,8 @@ class TransactionList extends StatelessWidget {
                 return Card(
                   child: Card(
                     elevation: 5,
-                    margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
                     child: ListTile(
                       leading: CircleAvatar(
                         backgroundColor: Colors.purple,
@@ -62,6 +64,11 @@ class TransactionList extends StatelessWidget {
                       ),
                       subtitle: Text(
                         DateFormat('d MMM y').format(e.date),
+                      ),
+                      trailing: IconButton(
+                        onPressed:() => onRemove(e.id),
+                        icon: const Icon(Icons.delete),
+                        color: Theme.of(context).colorScheme.error,
                       ),
                     ),
                   ),
